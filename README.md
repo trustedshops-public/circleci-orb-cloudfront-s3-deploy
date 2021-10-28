@@ -3,7 +3,7 @@ circleci-orb-cloudfront-s3-deploy
 [![GitHub License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/trustedshops-public/cloudfront-s3-deploy/blob/main/LICENSE)
 [![pre-commit](https://img.shields.io/badge/%E2%9A%93%20%20pre--commit-enabled-success)](https://pre-commit.com/)
 [![CircleCI Build Status](https://circleci.com/gh/trustedshops-public/circleci-orb-cloudfront-s3-deploy.svg?style=shield "CircleCI Build Status")](https://circleci.com/gh/trustedshops-public/circleci-orb-cloudfront-s3-deploy)
-[![CircleCI Orb Version](https://badges.circleci.com/orbs/trustedshops-public/circleci-orb-cloudfront-s3-deploy.svg)](https://circleci.com/orbs/registry/orb/trustedshops-public/circleci-orb-cloudfront-s3-deploy)
+[![CircleCI Orb Version](https://badges.circleci.com/orbs/trustedshops-public/cloudfront-s3-deploy.svg)](https://circleci.com/orbs/registry/orb/trustedshops-public/cloudfront-s3-deploy)
 
 CircleCI Orb for S3 static files deployment and CloudFront invalidation
 
