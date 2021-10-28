@@ -1,5 +1,5 @@
 description: >
-  Upload files to s3 and invalidate cloudfront cache
+  Installs aws cli, upload files to s3 and invalidate cloudfront cache
 
 executor: default
 
@@ -37,12 +37,28 @@ parameters:
     description: >
       Workspace root path that is either an absolute path or a path relative to the working directory.
     type: string
+  aws-access-key-id:
+    type: env_var_name
+    description: aws access key id override
+    default: AWS_ACCESS_KEY_ID
+  aws-secret-access-key:
+    type: env_var_name
+    description: aws secret access key override
+    default: AWS_SECRET_ACCESS_KEY
+  aws-region:
+    type: env_var_name
+    description: aws region override
+    default: AWS_REGION
 
 steps:
   - when:
       condition: <<parameters.checkout>>
       steps:
         - checkout
+  - aws-cli/setup:
+      aws-access-key-id: <<parameters.aws-access-key-id>>
+      aws-secret-access-key: <<parameters.aws-secret-access-key>>
+      aws-region: <<parameters.aws-region>>
   - s3-sync:
       bucket-name: <<parameters.bucket-name>>
       local: <<parameters.local>>

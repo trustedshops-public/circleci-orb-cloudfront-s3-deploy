@@ -2,6 +2,10 @@ version: 2.1
 
 description: |
   CircleCI Orb for S3 static files deployment and CloudFront invalidation
+
 display:
   home_url: "https://github.com/trustedshops-public/circleci-orb-cloudfront-s3-deploy"
   source_url: "https://github.com/trustedshops-public/circleci-orb-cloudfront-s3-deploy"
+
+orbs:
+  aws-cli: circleci/aws-cli@2.0.3
