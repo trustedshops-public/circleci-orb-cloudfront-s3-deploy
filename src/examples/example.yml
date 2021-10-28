@@ -1,0 +1,14 @@
+description: Help users getting started with the orb
+usage:
+  version: 2.1
+  orbs:
+    cloudfront-s3-deploy: trustedshops-public/cloudfront-s3-deploy@<version>
+  workflows:
+    version: 2
+    continious:
+      jobs:
+        - cloudfront-s3-deploy/job:
+            name: cloudfront-s3-deploy
+            filters:
+              branches:
+                only: [ main ]

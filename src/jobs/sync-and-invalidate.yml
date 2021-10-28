@@ -1,0 +1,54 @@
+description: >
+  Upload files to s3 and invalidate cloudfront cache
+
+executor: default
+
+parameters:
+  distribution-id:
+    description: ID of cloudfront distribution
+    type: string
+  pattern:
+    description: Pattern to purge
+    type: string
+    default: "/*"
+  bucket-name:
+    description: Name of the bucket to sync files to
+    type: string
+  local:
+    description: Local path to sync
+    type: string
+    default: "dist/"
+  remote:
+    description: Remote path in s3 to sync
+    type: string
+    default: ""
+  attach-workspace:
+    default: true
+    description: >
+      Boolean for whether or not to attach to an existing workspace.
+    type: boolean
+  checkout:
+    default: true
+    description: >
+      Boolean for whether or not to checkout sources
+    type: boolean
+  workspace-root:
+    default: .
+    description: >
+      Workspace root path that is either an absolute path or a path relative to the working directory.
+    type: string
+
+steps:
+  - when:
+      condition: <<parameters.checkout>>
+      steps:
+        - checkout
+  - s3-sync:
+      bucket-name: <<parameters.bucket-name>>
+      local: <<parameters.local>>
+      remote: <<parameters.remote>>
+      attach-workspace: <<parameters.attach-workspace>>
+      workspace-root: <<parameters.workspace-root>>
+  - cloudfront-invalidate:
+      distribution-id: <<parameters.distribution-id>>
+      pattern: <<parameters.pattern>>

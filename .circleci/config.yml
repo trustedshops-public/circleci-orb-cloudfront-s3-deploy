@@ -1,0 +1,97 @@
+version: 2.1
+
+.filter_all: &filter_all
+  filters:
+    branches:
+      only: /.*/
+    tags:
+      only: /.*/
+
+.filter_tags: &filter_tags
+  filters:
+    branches:
+      ignore: /.*/
+    tags:
+      only: /.*/
+
+.require_tests: &require_tests
+  requires:
+    - orb-tools/lint
+    - orb-tools/pack
+    - shellcheck/check
+
+orbs:
+  orb-tools: circleci/orb-tools@10.0
+  shellcheck: circleci/shellcheck@2.0
+  aws-s3: circleci/aws-s3@3.0.0
+  circleci-cli: circleci/circleci-cli@0.1.9
+  semantic-release: trustedshops-public/semantic-release@1.2.0
+
+commands:
+  upload_for_publish:
+    parameters:
+      orb-name:
+        type: string
+        description: Name of the orb without the slug
+      orb-slug:
+        type: string
+        description: Slug to publish the orb in, typically this is the org name
+      orb-version:
+        type: string
+        description: Version of the orb
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Setup AWS region
+          command: |
+            echo "export AWS_REGION=eu-central-1" >> $BASH_ENV
+      - aws-s3/copy:
+          from: orb.yml
+          to: s3://${S3_BUCKET_NAME_ORB_RELEASES}/<<parameters.orb-slug>>/<<parameters.orb-name>>/<<parameters.orb-version>>/orb.yml
+
+jobs:
+  publish-dev:
+    executor: circleci-cli/default
+    steps:
+      - upload_for_publish:
+          orb-name: cloudfront-s3-deploy
+          orb-slug: trustedshops-public
+          orb-version: dev:${CIRCLE_SHA1}
+  publish:
+    executor: circleci-cli/default
+    steps:
+      - upload_for_publish:
+          orb-name: cloudfront-s3-deploy
+          orb-slug: trustedshops-public
+          orb-version: ${CIRCLE_TAG}
+
+workflows:
+  continious:
+    jobs:
+      - orb-tools/lint:
+          <<: *filter_all
+      - orb-tools/pack:
+          <<: *filter_all
+      - shellcheck/check:
+          dir: ./src/scripts
+          exclude: SC2148
+          <<: *filter_all
+      - publish-dev:
+          <<: *require_tests
+          context:
+            - circleci-orbs
+      - publish:
+          <<: *require_tests
+          <<: *filter_tags
+          context:
+            - circleci-orbs
+      - semantic-release/with-changelog-github-config:
+          name: semantic-release
+          <<: *require_tests
+          filters:
+            branches:
+              only:
+                - main
+          context:
+            - semantic-release
