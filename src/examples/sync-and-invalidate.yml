@@ -1,14 +1,16 @@
-description: Help users getting started with the orb
+description: Sync and invalidate s3 sources
 usage:
   version: 2.1
   orbs:
     cloudfront-s3-deploy: trustedshops-public/cloudfront-s3-deploy@<version>
   workflows:
     version: 2
-    continious:
+    deploy:
       jobs:
-        - cloudfront-s3-deploy/job:
-            name: cloudfront-s3-deploy
+        - cloudfront-s3-deploy/sync-and-invalidate:
+            distribution-id: "ID goes here"
+            bucket-name: "my-bucket-name"
+            name: deploy
             filters:
               branches:
                 only: [ main ]
