@@ -14,7 +14,7 @@ parameters:
     type: string
     default: ""
   attach-workspace:
-    default: false
+    default: true
     description: >
       Boolean for whether or not to attach to an existing workspace.
     type: boolean
