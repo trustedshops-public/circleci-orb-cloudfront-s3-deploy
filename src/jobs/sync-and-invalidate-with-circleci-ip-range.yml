@@ -1,0 +1,72 @@
+description: >
+  Installs aws cli, upload files to s3 and invalidate cloudfront cache. All steps are ran with circleci ip range
+
+executor: default
+
+circleci_ip_ranges: true
+
+parameters:
+  distribution-id:
+    description: ID of cloudfront distribution
+    type: string
+  pattern:
+    description: Pattern to purge
+    type: string
+    default: "/*"
+  bucket-name:
+    description: Name of the bucket to sync files to
+    type: string
+  local:
+    description: Local path to sync
+    type: string
+    default: "dist/"
+  remote:
+    description: Remote path in s3 to sync
+    type: string
+    default: ""
+  attach-workspace:
+    default: true
+    description: >
+      Boolean for whether or not to attach to an existing workspace.
+    type: boolean
+  checkout:
+    default: true
+    description: >
+      Boolean for whether or not to checkout sources
+    type: boolean
+  workspace-root:
+    default: .
+    description: >
+      Workspace root path that is either an absolute path or a path relative to the working directory.
+    type: string
+  aws-access-key-id:
+    type: env_var_name
+    description: aws access key id override
+    default: AWS_ACCESS_KEY_ID
+  aws-secret-access-key:
+    type: env_var_name
+    description: aws secret access key override
+    default: AWS_SECRET_ACCESS_KEY
+  aws-region:
+    type: env_var_name
+    description: aws region override
+    default: AWS_REGION
+
+steps:
+  - when:
+      condition: <<parameters.checkout>>
+      steps:
+        - checkout
+  - aws-cli/setup:
+      aws-access-key-id: <<parameters.aws-access-key-id>>
+      aws-secret-access-key: <<parameters.aws-secret-access-key>>
+      aws-region: <<parameters.aws-region>>
+  - s3-sync:
+      bucket-name: <<parameters.bucket-name>>
+      local: <<parameters.local>>
+      remote: <<parameters.remote>>
+      attach-workspace: <<parameters.attach-workspace>>
+      workspace-root: <<parameters.workspace-root>>
+  - cloudfront-invalidate:
+      distribution-id: <<parameters.distribution-id>>
+      pattern: <<parameters.pattern>>
