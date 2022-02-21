@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/trustedshops-public/circleci-orb-cloudfront-s3-deploy/compare/2.0.0...2.1.0) (2022-02-21)
+
+
+### Features
+
+* Add sync job with dedicated ip range ([ad6be6e](https://github.com/trustedshops-public/circleci-orb-cloudfront-s3-deploy/commit/ad6be6ef88cf7d539cebe992fc76a2eae13580c6))
+
 # [2.0.0](https://github.com/trustedshops-public/circleci-orb-cloudfront-s3-deploy/compare/1.0.0...2.0.0) (2021-11-11)
 
 
