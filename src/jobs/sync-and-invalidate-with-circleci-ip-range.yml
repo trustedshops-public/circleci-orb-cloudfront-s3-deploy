@@ -24,6 +24,10 @@ parameters:
     description: Remote path in s3 to sync
     type: string
     default: ""
+  additional-args:
+    default: ""
+    description: Additional arguments to pass to AWS cli
+    type: string
   attach-workspace:
     default: true
     description: >
@@ -67,6 +71,7 @@ steps:
       remote: <<parameters.remote>>
       attach-workspace: <<parameters.attach-workspace>>
       workspace-root: <<parameters.workspace-root>>
+      additional-args: <<parameters.additional-args>>
   - cloudfront-invalidate:
       distribution-id: <<parameters.distribution-id>>
       pattern: <<parameters.pattern>>
