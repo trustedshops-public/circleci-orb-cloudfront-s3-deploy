@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/trustedshops-public/circleci-orb-cloudfront-s3-deploy/compare/2.1.0...2.2.0) (2022-04-05)
+
+
+### Features
+
+* Add addiitional args for s3 sync ([#2](https://github.com/trustedshops-public/circleci-orb-cloudfront-s3-deploy/issues/2)) ([db10887](https://github.com/trustedshops-public/circleci-orb-cloudfront-s3-deploy/commit/db10887778c8654b8ecf8cd2e84963752c472e78))
+
 # [2.1.0](https://github.com/trustedshops-public/circleci-orb-cloudfront-s3-deploy/compare/2.0.0...2.1.0) (2022-02-21)
 
 
