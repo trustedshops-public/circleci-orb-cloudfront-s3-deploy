@@ -1,3 +1,10 @@
+# [2.3.0](https://github.com/trustedshops-public/circleci-orb-cloudfront-s3-deploy/compare/2.2.0...2.3.0) (2022-06-22)
+
+
+### Features
+
+* Upgrade aws cli orb ([cfccb66](https://github.com/trustedshops-public/circleci-orb-cloudfront-s3-deploy/commit/cfccb663b73acb87e21438aea25559fd27e63d7f))
+
 # [2.2.0](https://github.com/trustedshops-public/circleci-orb-cloudfront-s3-deploy/compare/2.1.0...2.2.0) (2022-04-05)
 
 
