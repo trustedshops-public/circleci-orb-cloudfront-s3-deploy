@@ -1,3 +1,10 @@
+# [2.4.0](https://github.com/trustedshops-public/circleci-orb-cloudfront-s3-deploy/compare/2.3.0...2.4.0) (2022-10-13)
+
+
+### Features
+
+* Add support for web identity role ([#3](https://github.com/trustedshops-public/circleci-orb-cloudfront-s3-deploy/issues/3)) ([dab0ee9](https://github.com/trustedshops-public/circleci-orb-cloudfront-s3-deploy/commit/dab0ee91e0076ac3cabc24ea53dbc60bda3a7be8))
+
 # [2.3.0](https://github.com/trustedshops-public/circleci-orb-cloudfront-s3-deploy/compare/2.2.0...2.3.0) (2022-06-22)
 
 
