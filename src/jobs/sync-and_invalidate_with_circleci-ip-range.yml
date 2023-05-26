@@ -62,16 +62,16 @@ steps:
       steps:
         - checkout
   - aws-cli/setup:
-      aws-access-key-id: <<parameters.aws_access_key_id>>
-      aws-secret-access-key: <<parameters.aws_secret_access_key>>
-      aws-region: <<parameters.aws_region>>
+      aws_access_key_id: <<parameters.aws_access_key_id>>
+      aws_secret_access_key: <<parameters.aws_secret_access_key>>
+      aws_region: <<parameters.aws_region>>
   - s3_sync:
       bucket-name: <<parameters.bucket_name>>
       local: <<parameters.local>>
       remote: <<parameters.remote>>
-      attach-workspace: <<parameters.attach_workspace>>
-      workspace-root: <<parameters.workspace_root>>
-      additional-args: <<parameters.additional_args>>
+      attach_workspace: <<parameters.attach_workspace>>
+      workspace_root: <<parameters.workspace_root>>
+      additional_args: <<parameters.additional_args>>
   - cloudfront_invalidate:
-      distribution-id: <<parameters.distribution_id>>
+      distribution_id: <<parameters.distribution_id>>
       pattern: <<parameters.pattern>>

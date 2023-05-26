@@ -69,7 +69,7 @@ steps:
           - equal: [ <<parameters.aws_iam_web_identity_role_arn>>, "none" ]
       steps:
         - aws-cli/install
-        - aws-cli/assume-role-with-web-identity:
+        - aws-cli/assume_role_with_web_identity:
             role-arn: <<parameters.aws_iam_web_identity_role_arnn>>
   - when:
       condition:
@@ -77,16 +77,16 @@ steps:
           - equal: [ <<parameters.aws_iam_web_identity_role_arn>>, "none" ]
       steps:
         - aws-cli/setup:
-            aws-access-key-id: <<parameters.aws_access_key_id>>
-            aws-secret-access-key: <<parameters.aws_secret_access_key>>
-            aws-region: <<parameters.aws_region>>
+            aws_access_key_id: <<parameters.aws_access_key_id>>
+            aws_secret_access_key: <<parameters.aws_secret_access_key>>
+            aws_region: <<parameters.aws_region>>
   - s3_sync:
       bucket-name: <<parameters.bucket_name>>
       local: <<parameters.local>>
       remote: <<parameters.remote>>
-      attach-workspace: <<parameters.attach_workspace>>
-      workspace-root: <<parameters.workspace_root>>
-      additional-args: <<parameters.additional_args>>
+      attach_workspace: <<parameters.attach_workspace>>
+      workspace_root: <<parameters.workspace_root>>
+      additional_args: <<parameters.additional_args>>
   - cloudfront_invalidate:
-      distribution-id: <<parameters.distribution_id>>
+      distribution_id: <<parameters.distribution_id>>
       pattern: <<parameters.pattern>>
