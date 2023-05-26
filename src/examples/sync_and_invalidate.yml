@@ -7,9 +7,9 @@ usage:
     version: 2
     deploy:
       jobs:
-        - cloudfront-s3-deploy/sync-and-invalidate:
-            distribution-id: "ID goes here"
-            bucket-name: "my-bucket-name"
+        - cloudfront-s3-deploy/sync_and_invalidate:
+            distribution_id: "ID goes here"
+            bucket_name: "my-bucket-name"
             name: deploy
             filters:
               branches:

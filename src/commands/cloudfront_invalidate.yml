@@ -2,7 +2,7 @@ description: >
   Invalidate cloudfront cache
 
 parameters:
-  distribution-id:
+  distribution_id:
     description: ID of cloudfront distribution
     type: string
   pattern:
@@ -14,4 +14,4 @@ steps:
   - run:
       name: Invalidate cloudfront distribution cache
       command: |
-        aws cloudfront create-invalidation --distribution-id <<parameters.distribution-id>> --paths '<<parameters.pattern>>'
+        aws cloudfront create-invalidation --distribution-id <<parameters.distribution_id>> --paths '<<parameters.pattern>>'

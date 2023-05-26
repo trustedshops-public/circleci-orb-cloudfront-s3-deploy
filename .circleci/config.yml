@@ -21,7 +21,7 @@ version: 2.1
     - shellcheck/check
 
 orbs:
-  orb-tools: circleci/orb-tools@10.0
+  orb-tools: circleci/orb-tools@12.0
   shellcheck: circleci/shellcheck@2.0
   aws-s3: circleci/aws-s3@3.1.1
   circleci-cli: circleci/circleci-cli@0.1.9
@@ -46,6 +46,10 @@ commands:
           name: Setup AWS region
           command: |
             echo "export AWS_REGION=eu-central-1" >> $BASH_ENV
+      - run:
+          name: Extract orb archive
+          command: |
+            tar -xvzf orb_source.tar.gz
       - aws-s3/copy:
           from: orb.yml
           to: s3://${S3_BUCKET_NAME_ORB_RELEASES}/<<parameters.orb-slug>>/<<parameters.orb-name>>/<<parameters.orb-version>>/orb.yml

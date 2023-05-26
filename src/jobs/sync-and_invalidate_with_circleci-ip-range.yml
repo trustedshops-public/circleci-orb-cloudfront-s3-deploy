@@ -6,14 +6,14 @@ executor: default
 circleci_ip_ranges: true
 
 parameters:
-  distribution-id:
+  distribution_id:
     description: ID of cloudfront distribution
     type: string
   pattern:
     description: Pattern to purge
     type: string
     default: "/*"
-  bucket-name:
+  bucket_name:
     description: Name of the bucket to sync files to
     type: string
   local:
@@ -24,11 +24,11 @@ parameters:
     description: Remote path in s3 to sync
     type: string
     default: ""
-  additional-args:
+  additional_args:
     default: ""
     description: Additional arguments to pass to AWS cli
     type: string
-  attach-workspace:
+  attach_workspace:
     default: true
     description: >
       Boolean for whether or not to attach to an existing workspace.
@@ -38,20 +38,20 @@ parameters:
     description: >
       Boolean for whether or not to checkout sources
     type: boolean
-  workspace-root:
+  workspace_root:
     default: .
     description: >
       Workspace root path that is either an absolute path or a path relative to the working directory.
     type: string
-  aws-access-key-id:
+  aws_access_key_id:
     type: env_var_name
     description: aws access key id override
     default: AWS_ACCESS_KEY_ID
-  aws-secret-access-key:
+  aws_secret_access_key:
     type: env_var_name
     description: aws secret access key override
     default: AWS_SECRET_ACCESS_KEY
-  aws-region:
+  aws_region:
     type: env_var_name
     description: aws region override
     default: AWS_REGION
@@ -62,16 +62,16 @@ steps:
       steps:
         - checkout
   - aws-cli/setup:
-      aws-access-key-id: <<parameters.aws-access-key-id>>
-      aws-secret-access-key: <<parameters.aws-secret-access-key>>
-      aws-region: <<parameters.aws-region>>
-  - s3-sync:
-      bucket-name: <<parameters.bucket-name>>
+      aws_access_key_id: <<parameters.aws_access_key_id>>
+      aws_secret_access_key: <<parameters.aws_secret_access_key>>
+      region: <<parameters.aws_region>>
+  - s3_sync:
+      bucket_name: <<parameters.bucket_name>>
       local: <<parameters.local>>
       remote: <<parameters.remote>>
-      attach-workspace: <<parameters.attach-workspace>>
-      workspace-root: <<parameters.workspace-root>>
-      additional-args: <<parameters.additional-args>>
-  - cloudfront-invalidate:
-      distribution-id: <<parameters.distribution-id>>
+      attach_workspace: <<parameters.attach_workspace>>
+      workspace_root: <<parameters.workspace_root>>
+      additional_args: <<parameters.additional_args>>
+  - cloudfront_invalidate:
+      distribution_id: <<parameters.distribution_id>>
       pattern: <<parameters.pattern>>
