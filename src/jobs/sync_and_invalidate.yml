@@ -79,7 +79,7 @@ steps:
         - aws-cli/setup:
             aws_access_key_id: <<parameters.aws_access_key_id>>
             aws_secret_access_key: <<parameters.aws_secret_access_key>>
-            aws_region: <<parameters.aws_region>>
+            region: <<parameters.aws_region>>
   - s3_sync:
       bucket_name: <<parameters.bucket_name>>
       local: <<parameters.local>>
