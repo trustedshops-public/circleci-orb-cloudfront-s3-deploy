@@ -21,7 +21,7 @@ version: 2.1
     - shellcheck/check
 
 orbs:
-  orb-tools: circleci/orb-tools@12.0
+  orb-tools: circleci/orb-tools@12.0.3
   shellcheck: circleci/shellcheck@2.0
   aws-s3: circleci/aws-s3@3.1.1
   circleci-cli: circleci/circleci-cli@0.1.9
