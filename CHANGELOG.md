@@ -1,3 +1,14 @@
+## [3.0.0](https://github.com/trustedshops-public/circleci-orb-cloudfront-s3-deploy/compare/2.4.0...3.0.0) (2023-05-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* Migrate to orb tools v12 (#14)
+
+### Code Refactoring
+
+* Migrate to orb tools v12 ([#14](https://github.com/trustedshops-public/circleci-orb-cloudfront-s3-deploy/issues/14)) ([bfe3da6](https://github.com/trustedshops-public/circleci-orb-cloudfront-s3-deploy/commit/bfe3da61e48b851ab02bacd303a7eb8dec795b47))
+
 # [2.4.0](https://github.com/trustedshops-public/circleci-orb-cloudfront-s3-deploy/compare/2.3.0...2.4.0) (2022-10-13)
 
 
