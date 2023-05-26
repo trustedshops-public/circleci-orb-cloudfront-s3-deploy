@@ -80,13 +80,13 @@ steps:
             aws-access-key-id: <<parameters.aws_access_key_id>>
             aws-secret-access-key: <<parameters.aws_secret_access_key>>
             aws-region: <<parameters.aws_region>>
-  - s3-sync:
+  - s3_sync:
       bucket-name: <<parameters.bucket_name>>
       local: <<parameters.local>>
       remote: <<parameters.remote>>
       attach-workspace: <<parameters.attach_workspace>>
       workspace-root: <<parameters.workspace_root>>
       additional-args: <<parameters.additional_args>>
-  - cloudfront-invalidate:
+  - cloudfront_invalidate:
       distribution-id: <<parameters.distribution_id>>
       pattern: <<parameters.pattern>>
