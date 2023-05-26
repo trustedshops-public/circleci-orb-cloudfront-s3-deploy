@@ -2,7 +2,7 @@ description: >
   Sync files to s3 bucket
 
 parameters:
-  bucket-name:
+  bucket_name:
     description: Name of the bucket to sync files to
     type: string
   local:
@@ -13,28 +13,28 @@ parameters:
     description: Remote path in s3 to sync
     type: string
     default: ""
-  attach-workspace:
+  attach_workspace:
     default: true
     description: >
       Boolean for whether or not to attach to an existing workspace
     type: boolean
-  workspace-root:
+  workspace_root:
     default: .
     description: >
       Workspace root path that is either an absolute path or a path relative to the working directory
     type: string
-  additional-args:
+  additional_args:
     default: ""
     description: Additional arguments to pass to AWS cli
     type: string
 
 steps:
   - when:
-      condition: <<parameters.attach-workspace>>
+      condition: <<parameters.attach_workspace>>
       steps:
         - attach_workspace:
-            at: <<parameters.workspace-root>>
+            at: <<parameters.workspace_root>>
   - run:
       name: Sync files to s3 bucket
       command: |
-        aws s3 sync --delete <<parameters.local>> 's3://<<parameters.bucket-name>><<parameters.remote>>' <<parameters.additional-args>>
+        aws s3 sync --delete <<parameters.local>> 's3://<<parameters.bucket_name>><<parameters.remote>>' <<parameters.additional_args>>
