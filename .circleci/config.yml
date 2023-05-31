@@ -90,7 +90,7 @@ workflows:
           <<: *filter_tags
           context:
             - circleci-orbs
-      - semantic-release/with-changelog-github-config:
+      - semantic-release/with_changelog_github_config:
           name: semantic-release
           <<: *require_tests
           filters:
