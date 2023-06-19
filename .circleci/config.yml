@@ -25,7 +25,7 @@ orbs:
   shellcheck: circleci/shellcheck@2.0
   aws-s3: circleci/aws-s3@3.1.1
   circleci-cli: circleci/circleci-cli@0.1.9
-  semantic-release: trustedshops-public/semantic-release@5.1.0
+  semantic-release: trustedshops-public/semantic-release@5.1.1
 
 commands:
   upload_for_publish:
