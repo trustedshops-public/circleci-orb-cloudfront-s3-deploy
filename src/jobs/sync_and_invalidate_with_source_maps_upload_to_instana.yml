@@ -1,0 +1,129 @@
+description: >
+  Upload JS source maps to Instana APM
+
+executor: default
+
+parameters:
+  distribution_id:
+    description: ID of cloudfront distribution
+    type: string
+  pattern:
+    description: Pattern to purge
+    type: string
+    default: "/*"
+  bucket_name:
+    description: Name of the bucket to sync files to
+    type: string
+  local:
+    description: Local path to sync
+    type: string
+    default: "dist/"
+  remote:
+    description: Remote path in s3 to sync
+    type: string
+    default: ""
+  additional_args:
+    default: ""
+    description: Additional arguments to pass to AWS cli
+    type: string
+  attach_workspace:
+    default: true
+    description: >
+      Boolean for whether or not to attach to an existing workspace.
+    type: boolean
+  checkout:
+    default: true
+    description: >
+      Boolean for whether or not to checkout sources
+    type: boolean
+  workspace_root:
+    default: .
+    description: >
+      Workspace root path that is either an absolute path or a path relative to the working directory.
+    type: string
+  aws_access_key_id:
+    type: env_var_name
+    description: aws access key id override
+    default: AWS_ACCESS_KEY_ID
+  aws_secret_access_key:
+    type: env_var_name
+    description: aws secret access key override
+    default: AWS_SECRET_ACCESS_KEY
+  aws_iam_web_identity_role_arn:
+    type: string
+    description: IAM role of web identity enabled role to access aws resources
+    default: "none"
+  aws_region:
+    type: env_var_name
+    description: aws region override
+    default: AWS_REGION
+  # Instana source maps upload
+  instana_endpoint:
+    default: "$INSTANA_ENDPOINT"
+    type: string
+    description: Instana API endpoint host
+  instana_api_token:
+    default: "$INSTANA_API_TOKEN"
+    type: string
+    description: Instana API token
+  #      tenant:
+  #        default: "trustedshops"
+  #        description: "Tenant part in the Instana host name"
+  #        type: string
+  #      unit:
+  #        description: "Unit part in the Instana host name, must match stage (dev, test or prod)"
+  #        type: string
+  website_id:
+    description: "Website ID in Instana"
+    type: string
+  upload_config_id:
+    description: "Upload configuration ID in Instana TODO use for bulk cleanup in the cache invalidation step?"
+    type: string
+  assets_path:
+    default: "dist/assets"
+    description: "Local path to the older containing JS files and its source maps"
+    type: string
+  javascript_url:
+    description: "Remote path to the folder containing JS files and its source maps"
+    type: string
+steps:
+  - when:
+      condition: <<parameters.checkout>>
+      steps:
+        - checkout
+  - unless:
+      condition:
+        and:
+          - equal: [ <<parameters.aws_iam_web_identity_role_arn>>, "none" ]
+      steps:
+        - aws-cli/install
+        - aws-cli/assume_role_with_web_identity:
+            role_arn: <<parameters.aws_iam_web_identity_role_arn>>
+  - when:
+      condition:
+        and:
+          - equal: [ <<parameters.aws_iam_web_identity_role_arn>>, "none" ]
+      steps:
+        - aws-cli/setup:
+            aws_access_key_id: <<parameters.aws_access_key_id>>
+            aws_secret_access_key: <<parameters.aws_secret_access_key>>
+            region: <<parameters.aws_region>>
+  - s3_sync:
+      bucket_name: <<parameters.bucket_name>>
+      local: <<parameters.local>>
+      remote: <<parameters.remote>>
+      attach_workspace: <<parameters.attach_workspace>>
+      workspace_root: <<parameters.workspace_root>>
+      additional_args: <<parameters.additional_args>>
+  - cloudfront_invalidate:
+      distribution_id: <<parameters.distribution_id>>
+      pattern: <<parameters.pattern>>
+  - upload_source_maps_to_instana:
+      instana_endpoint: << parameters.instana_endpoint >>
+      instana_api_token: << parameters.instana_api_token >>
+      website_id: << parameters.website_id >>
+      upload_config_id: << parameters.upload_config_id >>
+      assets_path: << parameters.assets_path >>
+      javascript_url: << parameters.javascript_url >>
+  # TODO remove old uploads from Instana
+

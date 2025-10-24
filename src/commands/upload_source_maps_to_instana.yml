@@ -17,39 +17,52 @@ parameters:
   #      unit:
   #        description: "Unit part in the Instana host name, must match stage (dev, test or prod)"
   #        type: string
-  website_id:
-    description: "Website ID in Instana"
-    type: string
-  upload_config_id:
-    description: "Upload configuration ID in Instana TODO use for bulk cleanup in the cache invalidation step?"
-    type: string
-  assets_path:
-    default: "dist/assets"
-    description: "Local path to the older containing JS files and its source maps"
-    type: string
-  javascript_url:
-    description: "Remote path to the folder containing JS files and its source maps"
-    type: string
+    website_id:
+      description: "Website ID in Instana"
+      type: string
+    upload_config_id:
+      description: "Upload configuration ID in Instana TODO use for bulk cleanup in the cache invalidation step?"
+      type: string
+    assets_path:
+      default: "dist/assets"
+      description: "Local path to the folder containing JS files"
+      type: string
+    maps_path:
+      default: "source-maps"
+      description: "Local path to the folder containing JS source maps"
+      type: string
+    javascript_url:
+      description: "Remote path to the folder containing JS files"
+      type: string
 steps:
-  - run:
-      name: Upload JS source maps toInstana
-      command: |
-        echo "########### JS files ##########"
-        ls -al << parameters.assets_path >>/*.js
-        echo "########### JS source map files ##########"
-        ls -al  << parameters.assets_path >>/*.js.map
-        INSTANA_API_UPLOAD_ENDPOINT="https://<< parameters.instana_endpoint >>/api/website-monitoring/config/<< parameters.website_id >>/sourcemap-upload/<< parameters.upload_config_id >>/form"
-        echo "INSTANA_API_UPLOAD_ENDPOINT=$INSTANA_API_UPLOAD_ENDPOINT"
-        for file in  << parameters.assets_path >>/*.js; do
-          filename=$(basename "$file")
-          LOCAL_MAPFILE_LOCATION="<< parameters.assets_path >>/${filename}.map"
-          echo "LOCAL_MAPFILE_LOCATION=$LOCAL_MAPFILE_LOCATION"
-          JAVASCRIPT_URL="<< parameters.javascript_url >>/$filename"
-          echo "JAVASCRIPT_URL=$JAVASCRIPT_URL"
-          INSTANA_UPLOAD_COMMAND="curl -L -X PUT \"$INSTANA_API_UPLOAD_ENDPOINT\" -H \"authorization: apiToken << parameters.instana_api_token >>\" -F \"url=$JAVASCRIPT_URL\" -F \"sourceMap=@$LOCAL_MAPFILE_LOCATION\""
-          eval "$INSTANA_UPLOAD_COMMAND"
-        done
-        # do not upload source maps TODO control by var?
-        rm -f << parameters.assets_path >>/*.js.map
-        echo "########### JS source map files must be removed ##########"
-        ls -al  << parameters.assets_path >>/assests/*.js.map || true
+  - when:
+      condition: <<parameters.attach_workspace>>
+      steps:
+        - attach_workspace:
+            at: <<parameters.workspace_root>>
+  - when:
+      condition: <<parameters.attach_workspace>>
+      steps:
+        - run:
+            name: Upload JS source maps toInstana
+            command: |
+              echo "########### JS files ##########"
+              ls -al << parameters.assets_path >>/*.js
+              if ls << parameters.assets_path >>/*.js.map >/dev/null 2>&1; then
+                echo "Error: << parameters.assets_path >>/*.js.map files still exist! Move them to the maps/ directory on the same level like your dist/ folder."
+                exit 1
+              fi
+              echo "########### JS source map files ##########"
+              ls -al  << parameters.maps_path >>/*.js.map
+              INSTANA_API_UPLOAD_ENDPOINT="https://<< parameters.instana_endpoint >>/api/website-monitoring/config/<< parameters.website_id >>/sourcemap-upload/<< parameters.upload_config_id >>/form"
+              echo "INSTANA_API_UPLOAD_ENDPOINT=$INSTANA_API_UPLOAD_ENDPOINT"
+              
+              for file in  << parameters.assets_path >>/*.js; do
+                filename=$(basename "$file")
+                LOCAL_MAPFILE_LOCATION="<< parameters.maps_path >>/${filename}.map"
+                echo "LOCAL_MAPFILE_LOCATION=$LOCAL_MAPFILE_LOCATION"
+                JAVASCRIPT_URL="<< parameters.javascript_url >>/$filename"
+                echo "JAVASCRIPT_URL=$JAVASCRIPT_URL"
+                INSTANA_UPLOAD_COMMAND="curl -L -X PUT \"$INSTANA_API_UPLOAD_ENDPOINT\" -H \"authorization: apiToken << parameters.instana_api_token >>\" -F \"url=$JAVASCRIPT_URL\" -F \"sourceMap=@$LOCAL_MAPFILE_LOCATION\""
+                eval "$INSTANA_UPLOAD_COMMAND"
+              done
