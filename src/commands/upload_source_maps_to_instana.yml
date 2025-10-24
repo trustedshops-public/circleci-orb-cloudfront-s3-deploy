@@ -27,6 +27,15 @@ parameters:
   javascript_url:
     description: "Remote path to the folder containing JS files"
     type: string
+  attach_workspace:
+    default: true
+    description: >
+      Boolean for whether or not to attach to an existing workspace
+    type: boolean
+  workspace_root:
+    default: .
+    description: >
+      Workspace root path that is either an absolute path or a path relative to the working directory
 steps:
   - when:
       condition: <<parameters.attach_workspace>>
