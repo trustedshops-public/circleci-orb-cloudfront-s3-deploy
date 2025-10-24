@@ -40,7 +40,6 @@ steps:
         ls -al  << parameters.assets_path >>/*.js.map
         INSTANA_API_UPLOAD_ENDPOINT="https://<< parameters.instana_endpoint >>/api/website-monitoring/config/<< parameters.website_id >>/sourcemap-upload/<< parameters.upload_config_id >>/form"
         echo "INSTANA_API_UPLOAD_ENDPOINT=$INSTANA_API_UPLOAD_ENDPOINT"
-        
         for file in  << parameters.assets_path >>/*.js; do
           filename=$(basename "$file")
           LOCAL_MAPFILE_LOCATION="<< parameters.assets_path >>/${filename}.map"
