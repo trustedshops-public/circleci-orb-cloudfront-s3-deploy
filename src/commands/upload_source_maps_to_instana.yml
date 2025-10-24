@@ -30,27 +30,27 @@ parameters:
   javascript_url:
     description: "Remote path to the folder containing JS files and its source maps"
     type: string
-  steps:
-    - run:
-        name: Upload JS source maps toInstana
-        command: |
-          echo "########### JS files ##########"
-          ls -al << parameters.assets_path >>/*.js
-          echo "########### JS source map files ##########"
-          ls -al  << parameters.assets_path >>/*.js.map
-          INSTANA_API_UPLOAD_ENDPOINT="https://<< parameters.instana_endpoint >>/api/website-monitoring/config/<< parameters.website_id >>/sourcemap-upload/<< parameters.upload_config_id >>/form"
-          echo "INSTANA_API_UPLOAD_ENDPOINT=$INSTANA_API_UPLOAD_ENDPOINT"
-          
-          for file in  << parameters.assets_path >>/*.js; do
-            filename=$(basename "$file")
-            LOCAL_MAPFILE_LOCATION="<< parameters.assets_path >>/${filename}.map"
-            echo "LOCAL_MAPFILE_LOCATION=$LOCAL_MAPFILE_LOCATION"
-            JAVASCRIPT_URL="<< parameters.javascript_url >>/$filename"
-            echo "JAVASCRIPT_URL=$JAVASCRIPT_URL"
-            INSTANA_UPLOAD_COMMAND="curl -L -X PUT \"$INSTANA_API_UPLOAD_ENDPOINT\" -H \"authorization: apiToken << parameters.instana_api_token >>\" -F \"url=$JAVASCRIPT_URL\" -F \"sourceMap=@$LOCAL_MAPFILE_LOCATION\""
-            eval "$INSTANA_UPLOAD_COMMAND"
-          done
-          # do not upload source maps TODO control by var?
-          rm -f << parameters.assets_path >>/*.js.map
-          echo "########### JS source map files must be removed ##########"
-          ls -al  << parameters.assets_path >>/*.js.map || true
+steps:
+  - run:
+      name: Upload JS source maps toInstana
+      command: |
+        echo "########### JS files ##########"
+        ls -al << parameters.assets_path >>/*.js
+        echo "########### JS source map files ##########"
+        ls -al  << parameters.assets_path >>/*.js.map
+        INSTANA_API_UPLOAD_ENDPOINT="https://<< parameters.instana_endpoint >>/api/website-monitoring/config/<< parameters.website_id >>/sourcemap-upload/<< parameters.upload_config_id >>/form"
+        echo "INSTANA_API_UPLOAD_ENDPOINT=$INSTANA_API_UPLOAD_ENDPOINT"
+        
+        for file in  << parameters.assets_path >>/*.js; do
+          filename=$(basename "$file")
+          LOCAL_MAPFILE_LOCATION="<< parameters.assets_path >>/${filename}.map"
+          echo "LOCAL_MAPFILE_LOCATION=$LOCAL_MAPFILE_LOCATION"
+          JAVASCRIPT_URL="<< parameters.javascript_url >>/$filename"
+          echo "JAVASCRIPT_URL=$JAVASCRIPT_URL"
+          INSTANA_UPLOAD_COMMAND="curl -L -X PUT \"$INSTANA_API_UPLOAD_ENDPOINT\" -H \"authorization: apiToken << parameters.instana_api_token >>\" -F \"url=$JAVASCRIPT_URL\" -F \"sourceMap=@$LOCAL_MAPFILE_LOCATION\""
+          eval "$INSTANA_UPLOAD_COMMAND"
+        done
+        # do not upload source maps TODO control by var?
+        rm -f << parameters.assets_path >>/*.js.map
+        echo "########### JS source map files must be removed ##########"
+        ls -al  << parameters.assets_path >>/*.js.map || true
