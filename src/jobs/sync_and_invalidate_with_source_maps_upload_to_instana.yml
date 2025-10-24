@@ -124,5 +124,5 @@ steps:
       website_id: << parameters.website_id >>
       upload_config_id: << parameters.upload_config_id >>
       assets_path: << parameters.assets_path >>
-      javascript_url: << parameters.javascript_url >>
+      js_url: << parameters.javascript_url >>
   # TODO remove old uploads from Instana
