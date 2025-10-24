@@ -24,7 +24,7 @@ parameters:
     default: "source-maps"
     description: "Local path to the folder containing JS source maps"
     type: string
-  JS_URL:
+  js_url:
     description: "Remote path to the folder containing JS files"
     type: string
   attach_workspace:
@@ -63,7 +63,7 @@ steps:
                 filename=$(basename "$file")
                 MAP_LOCATION="<< parameters.maps_path >>/${filename}.map"
                 echo "MAP_LOCATION=$MAP_LOCATION"
-                JS_URL="<< parameters.JS_URL >>/$filename"
+                JS_URL="<< parameters.js_url >>/$filename"
                 echo "JS_URL=$JS_URL"
                 UPLOAD_CMD="curl -L -X PUT \"$UPLOAD_ENDPOINT\" -H \"authorization: apiToken << parameters.instana_api_token >>\" -F \"url=$JS_URL\" -F \"sourceMap=@$MAP_LOCATION\""
                 eval "$UPLOAD_CMD"
