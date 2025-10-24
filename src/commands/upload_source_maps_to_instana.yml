@@ -36,6 +36,7 @@ parameters:
     default: .
     description: >
       Workspace root path that is either an absolute path or a path relative to the working directory
+    type: string
 steps:
   - when:
       condition: <<parameters.attach_workspace>>
