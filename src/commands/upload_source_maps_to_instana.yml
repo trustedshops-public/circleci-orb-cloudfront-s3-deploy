@@ -52,4 +52,4 @@ steps:
         # do not upload source maps TODO control by var?
         rm -f << parameters.assets_path >>/*.js.map
         echo "########### JS source map files must be removed ##########"
-        ls -al  << parameters.assets_path >>/*.js.map || true
+        ls -al  << parameters.assets_path >>/assests/*.js.map || true
