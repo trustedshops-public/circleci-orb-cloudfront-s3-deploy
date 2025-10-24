@@ -10,30 +10,23 @@ parameters:
     default: "$INSTANA_API_TOKEN"
     type: string
     description: Instana API token
-  #      tenant:
-  #        default: "trustedshops"
-  #        description: "Tenant part in the Instana host name"
-  #        type: string
-  #      unit:
-  #        description: "Unit part in the Instana host name, must match stage (dev, test or prod)"
-  #        type: string
-    website_id:
-      description: "Website ID in Instana"
-      type: string
-    upload_config_id:
-      description: "Upload configuration ID in Instana TODO use for bulk cleanup in the cache invalidation step?"
-      type: string
-    assets_path:
-      default: "dist/assets"
-      description: "Local path to the folder containing JS files"
-      type: string
-    maps_path:
-      default: "source-maps"
-      description: "Local path to the folder containing JS source maps"
-      type: string
-    javascript_url:
-      description: "Remote path to the folder containing JS files"
-      type: string
+  website_id:
+    description: "Website ID in Instana"
+    type: string
+  upload_config_id:
+    description: "Upload configuration ID in Instana TODO use for bulk cleanup in the cache invalidation step?"
+    type: string
+  assets_path:
+    default: "dist/assets"
+    description: "Local path to the folder containing JS files"
+    type: string
+  maps_path:
+    default: "source-maps"
+    description: "Local path to the folder containing JS source maps"
+    type: string
+  javascript_url:
+    description: "Remote path to the folder containing JS files"
+    type: string
 steps:
   - when:
       condition: <<parameters.attach_workspace>>
