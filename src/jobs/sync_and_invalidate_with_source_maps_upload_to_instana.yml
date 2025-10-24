@@ -126,4 +126,3 @@ steps:
       assets_path: << parameters.assets_path >>
       javascript_url: << parameters.javascript_url >>
   # TODO remove old uploads from Instana
-

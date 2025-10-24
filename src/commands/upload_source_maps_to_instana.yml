@@ -24,7 +24,7 @@ parameters:
     default: "source-maps"
     description: "Local path to the folder containing JS source maps"
     type: string
-  javascript_url:
+  JS_URL:
     description: "Remote path to the folder containing JS files"
     type: string
   attach_workspace:
@@ -57,15 +57,14 @@ steps:
               fi
               echo "########### JS source map files ##########"
               ls -al  << parameters.maps_path >>/*.js.map
-              INSTANA_API_UPLOAD_ENDPOINT="https://<< parameters.instana_endpoint >>/api/website-monitoring/config/<< parameters.website_id >>/sourcemap-upload/<< parameters.upload_config_id >>/form"
-              echo "INSTANA_API_UPLOAD_ENDPOINT=$INSTANA_API_UPLOAD_ENDPOINT"
-              
+              UPLOAD_ENDPOINT="https://<< parameters.instana_endpoint >>/api/website-monitoring/config/<< parameters.website_id >>/sourcemap-upload/<< parameters.upload_config_id >>/form"
+              echo "UPLOAD_ENDPOINT=$UPLOAD_ENDPOINT"
               for file in  << parameters.assets_path >>/*.js; do
                 filename=$(basename "$file")
-                LOCAL_MAPFILE_LOCATION="<< parameters.maps_path >>/${filename}.map"
-                echo "LOCAL_MAPFILE_LOCATION=$LOCAL_MAPFILE_LOCATION"
-                JAVASCRIPT_URL="<< parameters.javascript_url >>/$filename"
-                echo "JAVASCRIPT_URL=$JAVASCRIPT_URL"
-                INSTANA_UPLOAD_COMMAND="curl -L -X PUT \"$INSTANA_API_UPLOAD_ENDPOINT\" -H \"authorization: apiToken << parameters.instana_api_token >>\" -F \"url=$JAVASCRIPT_URL\" -F \"sourceMap=@$LOCAL_MAPFILE_LOCATION\""
-                eval "$INSTANA_UPLOAD_COMMAND"
+                MAP_LOCATION="<< parameters.maps_path >>/${filename}.map"
+                echo "MAP_LOCATION=$MAP_LOCATION"
+                JS_URL="<< parameters.JS_URL >>/$filename"
+                echo "JS_URL=$JS_URL"
+                UPLOAD_CMD="curl -L -X PUT \"$UPLOAD_ENDPOINT\" -H \"authorization: apiToken << parameters.instana_api_token >>\" -F \"url=$JS_URL\" -F \"sourceMap=@$MAP_LOCATION\""
+                eval "$UPLOAD_CMD"
               done
