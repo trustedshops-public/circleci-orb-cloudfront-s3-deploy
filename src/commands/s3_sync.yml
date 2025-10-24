@@ -37,4 +37,5 @@ steps:
   - run:
       name: Sync files to s3 bucket
       command: |
+        ls -al <<parameters.local>>
         aws s3 sync --delete <<parameters.local>> 's3://<<parameters.bucket_name>><<parameters.remote>>' <<parameters.additional_args>>
