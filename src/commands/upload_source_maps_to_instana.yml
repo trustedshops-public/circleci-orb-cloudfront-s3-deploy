@@ -13,8 +13,8 @@ parameters:
   website_id:
     description: "Website ID in Instana"
     type: string
-  upload_config_id:
-    description: "Upload configuration ID in Instana TODO use for bulk cleanup in the cache invalidation step?"
+  upload_config_prefix:
+    description: "Upload configuration prefix in Instana, used for bulk cleanup of the old ones"
     type: string
   assets_path:
     default: "dist/assets"
@@ -27,44 +27,28 @@ parameters:
   js_url:
     description: "Remote path to the folder containing JS files"
     type: string
-  attach_workspace:
-    default: true
-    description: >
-      Boolean for whether or not to attach to an existing workspace
-    type: boolean
-  workspace_root:
-    default: .
-    description: >
-      Workspace root path that is either an absolute path or a path relative to the working directory
-    type: string
 steps:
-  - when:
-      condition: <<parameters.attach_workspace>>
-      steps:
-        - attach_workspace:
-            at: <<parameters.workspace_root>>
-  - when:
-      condition: <<parameters.attach_workspace>>
-      steps:
-        - run:
-            name: Upload JS source maps toInstana
-            command: |
-              echo "########### JS files ##########"
-              ls -al << parameters.assets_path >>/*.js
-              if ls << parameters.assets_path >>/*.js.map >/dev/null 2>&1; then
-                echo "Error: << parameters.assets_path >>/*.js.map files still exist! Move them to the maps/ directory on the same level like your dist/ folder."
-                exit 1
-              fi
-              echo "########### JS source map files ##########"
-              ls -al  << parameters.maps_path >>/*.js.map
-              UPLOAD_ENDPOINT="https://<< parameters.instana_endpoint >>/api/website-monitoring/config/<< parameters.website_id >>/sourcemap-upload/<< parameters.upload_config_id >>/form"
-              echo "UPLOAD_ENDPOINT=$UPLOAD_ENDPOINT"
-              for file in  << parameters.assets_path >>/*.js; do
-                filename=$(basename "$file")
-                MAP_LOCATION="<< parameters.maps_path >>/${filename}.map"
-                echo "MAP_LOCATION=$MAP_LOCATION"
-                JS_URL="<< parameters.js_url >>/$filename"
-                echo "JS_URL=$JS_URL"
-                UPLOAD_CMD="curl -L -X PUT \"$UPLOAD_ENDPOINT\" -H \"authorization: apiToken << parameters.instana_api_token >>\" -F \"url=$JS_URL\" -F \"sourceMap=@$MAP_LOCATION\""
-                eval "$UPLOAD_CMD"
-              done
+  - run:
+      name: Upload JS source maps to Instana
+      command: |
+        echo "########### JS files ##########"
+        ls -al << parameters.assets_path >>/*.js
+        if ls << parameters.assets_path >>/*.js.map >/dev/null 2>&1; then
+          echo "Error: << parameters.assets_path >>/*.js.map files still exist! Move them to the maps/ directory on the same level like your dist/ folder."
+          exit 1
+        fi
+        echo "########### JS source map files ##########"
+        ls -al  << parameters.maps_path >>/*.js.map
+        echo "TODO create new upload configuration for Instana"
+        UPLOAD_ENDPOINT="https://<< parameters.instana_endpoint >>/api/website-monitoring/config/<< parameters.website_id >>/sourcemap-upload/<< parameters.upload_config_id >>/form"
+        echo "UPLOAD_ENDPOINT=$UPLOAD_ENDPOINT"
+        for file in  << parameters.assets_path >>/*.js; do
+          filename=$(basename "$file")
+          MAP_LOCATION="<< parameters.maps_path >>/${filename}.map"
+          echo "MAP_LOCATION=$MAP_LOCATION"
+          JS_URL="<< parameters.js_url >>/$filename"
+          echo "JS_URL=$JS_URL"
+          UPLOAD_CMD="curl -L -X PUT \"$UPLOAD_ENDPOINT\" -H \"authorization: apiToken << parameters.instana_api_token >>\" -F \"url=$JS_URL\" -F \"sourceMap=@$MAP_LOCATION\""
+          eval "$UPLOAD_CMD"
+        done
+        echo "TODO remove old upload configurations from Instana"

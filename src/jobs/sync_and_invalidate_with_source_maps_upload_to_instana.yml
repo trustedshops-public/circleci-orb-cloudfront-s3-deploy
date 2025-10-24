@@ -76,8 +76,8 @@ parameters:
   website_id:
     description: "Website ID in Instana"
     type: string
-  upload_config_id:
-    description: "Upload configuration ID in Instana TODO use for bulk cleanup in the cache invalidation step?"
+  upload_config_prefix:
+    description: "Upload configuration prefix in Instana, used for bulk cleanup of the old ones"
     type: string
   assets_path:
     default: "dist/assets"
@@ -115,9 +115,6 @@ steps:
       attach_workspace: <<parameters.attach_workspace>>
       workspace_root: <<parameters.workspace_root>>
       additional_args: <<parameters.additional_args>>
-  - cloudfront_invalidate:
-      distribution_id: <<parameters.distribution_id>>
-      pattern: <<parameters.pattern>>
   - upload_source_maps_to_instana:
       instana_endpoint: << parameters.instana_endpoint >>
       instana_api_token: << parameters.instana_api_token >>
@@ -125,4 +122,6 @@ steps:
       upload_config_id: << parameters.upload_config_id >>
       assets_path: << parameters.assets_path >>
       js_url: << parameters.javascript_url >>
-  # TODO remove old uploads from Instana
+  - cloudfront_invalidate:
+      distribution_id: <<parameters.distribution_id>>
+      pattern: <<parameters.pattern>>
