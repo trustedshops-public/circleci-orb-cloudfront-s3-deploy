@@ -57,9 +57,9 @@ steps:
         CLEAR_CMD="curl -s -o /dev/null -w  -X PUT "$CLEAR_ENDPOINT" -H "authorization: apiToken << parameters.instana_api_token >>"
         CLEAR_RESPONSE_CODE=$("$CLEAR_CMD")
         echo "CLEAR_RESPONSE_CODE=$CLEAR_RESPONSE_CODE"
-        if [ "$CLEAR_RESPONSE_CODE" -eq 204 ]; then  
+        if [ "$CLEAR_RESPONSE_CODE" -eq 204 ]; then
           echo "Request to clear source map files was successful."
-        else  
+        else
           echo "Request to clear source map files failed with status code: $CLEAR_RESPONSE_CODE"
           exit 1
         fi
