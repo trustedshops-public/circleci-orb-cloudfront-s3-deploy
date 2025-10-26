@@ -47,6 +47,22 @@ steps:
           UPLOAD_CONFIG_ID=$(echo "$CREATION_RESPONSE" | jq -r '.id')
           echo "UPLOAD_CONFIG_ID=$UPLOAD_CONFIG_ID"
         fi
+        if [ -z "$UPLOAD_CONFIG_ID" ]; then
+          echo "UPLOAD_CONFIG_ID is empty!"
+          exit 1
+        fi
+        # clear uploads
+        CLEAR_ENDPOINT="https://<< parameters.instana_endpoint >>/api/website-monitoring/config/<< parameters.website_id >>/sourcemap-upload/$UPLOAD_CONFIG_ID/clear"
+        echo "CLEAR_ENDPOINT=$CLEAR_ENDPOINT"
+        CLEAR_CMD="curl -s -o /dev/null -w  -X PUT $CLEAR_ENDPOINT -H \"authorization: apiToken << parameters.instana_api_token >>\""
+        CLEAR_RESPONSE_CODE=$("$CLEAR_CMD")
+        echo "CLEAR_RESPONSE_CODE=$CLEAR_RESPONSE_CODE"
+        if [ "$CLEAR_RESPONSE_CODE" -eq 204 ]; then  
+          echo "Request to clear source map files was successful."
+        else  
+          echo "Request to clear source map files failed with status code: $CLEAR_RESPONSE_CODE"
+          exit 1
+        fi
         # upload files
         echo "########### JS files ##########"
         ls -al << parameters.assets_path >>/*.js
