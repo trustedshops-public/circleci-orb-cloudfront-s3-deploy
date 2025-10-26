@@ -42,7 +42,7 @@ steps:
           echo "CREATION_ENDPOINT=$CREATION_ENDPOINT"
           CREATION_BODY='{"description":"<< parameters.upload_config_name >>"}'
           CREATION_CMD="-X POST \"$CREATION_ENDPOINT\" -H \"authorization: apiToken << parameters.instana_api_token >>\" -d \"$CREATION_BODY\""
-          CREATION_RESPONSE=$("curl -H "Content-Type: application/json" -H "Accept: application/json" $CREATION_CMD")
+          CREATION_RESPONSE=$(curl -H "Content-Type: application/json" -H "Accept: application/json" "$CREATION_CMD")
           echo "CREATION_RESPONSE=$CREATION_RESPONSE"
           UPLOAD_CONFIG_ID=$(echo "$CREATION_RESPONSE" | jq -r '.id')
           echo "UPLOAD_CONFIG_ID=$UPLOAD_CONFIG_ID"
