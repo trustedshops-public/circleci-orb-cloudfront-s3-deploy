@@ -32,7 +32,7 @@ steps:
       name: Upload JS source maps to Instana
       command: |
         # get all
-        GET_RESPONSE=$(curl -X GET "https://$UNIT-$TENANT.instana.io/api/website-monitoring/config/$WEBSITE_ID/sourcemap-upload" -H "Accept: application/json" -H "Authorization: apiToken $API_TOKEN")
+        GET_RESPONSE=$(curl -X GET "https://<< parameters.instana_endpoint >>/api/website-monitoring/config/$WEBSITE_ID/sourcemap-upload" -H "Accept: application/json" -H "Authorization: apiToken $API_TOKEN")
         echo $GET_RESPONSE
         UPLOAD_CONFIG_ID=$(echo "$GET_RESPONSE" | jq -r '.configs[] | select(.description == "<< parameters.upload_config_name >>") | .id')
         echo $UPLOAD_CONFIG_ID
