@@ -58,6 +58,10 @@ parameters:
     description: aws region override
     default: AWS_REGION
   # Instana source maps upload
+  bucket_key:
+    description: Name of the bucket key to distinguish between assets to be uploaded to the same bucket
+    type: string
+    default: ""
   instana_endpoint:
     default: "$INSTANA_ENDPOINT"
     type: string
@@ -75,9 +79,6 @@ parameters:
   #        type: string
   website_id:
     description: "Website ID in Instana"
-    type: string
-  upload_config_prefix:
-    description: "Upload configuration prefix in Instana, used for bulk cleanup of the old ones"
     type: string
   assets_path:
     default: "dist/assets"
@@ -119,7 +120,8 @@ steps:
       instana_endpoint: << parameters.instana_endpoint >>
       instana_api_token: << parameters.instana_api_token >>
       website_id: << parameters.website_id >>
-      upload_config_id: << parameters.upload_config_id >>
+      # use bucket_name as upload_config_name
+      upload_config_name: "<< parameters.bucket_name >><< parameters.bucket_key>>"
       assets_path: << parameters.assets_path >>
       js_url: << parameters.javascript_url >>
   - cloudfront_invalidate:
