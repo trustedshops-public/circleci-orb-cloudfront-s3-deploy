@@ -54,13 +54,13 @@ steps:
         # clear uploads
         CLEAR_ENDPOINT="https://<< parameters.instana_endpoint >>/api/website-monitoring/config/<< parameters.website_id >>/sourcemap-upload/$UPLOAD_CONFIG_ID/clear"
         echo "CLEAR_ENDPOINT=$CLEAR_ENDPOINT"
-        CLEAR_CMD="curl -s -o /dev/null -w  -X PUT "$CLEAR_ENDPOINT" -H \"authorization: apiToken << parameters.instana_api_token >>\""
+        CLEAR_CMD="curl -o /dev/null -s -w \"%{http_code}\\n\" -X PUT $CLEAR_ENDPOINT -H \"authorization: apiToken << parameters.instana_api_token >>\""
         CLEAR_RESPONSE_CODE=$("$CLEAR_CMD")
         echo "CLEAR_RESPONSE_CODE=$CLEAR_RESPONSE_CODE"
         if [ "$CLEAR_RESPONSE_CODE" -eq 204 ]; then
-          echo "Request to clear source map files was successful."
+          echo "Request to clear source map files for << parameters.upload_config_name >> was successful."
         else
-          echo "Request to clear source map files failed with status code: $CLEAR_RESPONSE_CODE"
+          echo "Request to clear source map files for << parameters.upload_config_name >> failed with status code: $CLEAR_RESPONSE_CODE"
           exit 1
         fi
         # upload files
@@ -72,7 +72,6 @@ steps:
         fi
         echo "########### JS source map files ##########"
         ls -al  << parameters.maps_path >>/*.js.map
-        echo "TODO create new upload configuration for Instana"
         UPLOAD_ENDPOINT="https://<< parameters.instana_endpoint >>/api/website-monitoring/config/<< parameters.website_id >>/sourcemap-upload/$UPLOAD_CONFIG_ID/form"
         echo "UPLOAD_ENDPOINT=$UPLOAD_ENDPOINT"
         for file in  << parameters.assets_path >>/*.js; do
@@ -85,4 +84,3 @@ steps:
           UPLOAD_RESULT=$(curl -H "ContentType: multipart/form-data" "$UPLOAD_CMD")
           echo "UPLOAD_RESULT=$UPLOAD_RESULT"
         done
-        echo "TODO remove old upload configurations from Instana"
