@@ -37,7 +37,7 @@ steps:
         UPLOAD_CONFIG_ID=$(echo "$GET_RESPONSE" | jq -r '.configs[] | select(.description == "<< parameters.upload_config_name >>") | .id')
         # create config if not found
         if [ -z "$UPLOAD_CONFIG_ID" ]; then
-          echo "No file upload configuration << parameters.upload_config_name >> was found, so creating a new one..." 
+          echo "No file upload configuration << parameters.upload_config_name >> was found, so creating a new one..."
           CREATION_ENDPOINT="https://<< parameters.instana_endpoint >>/api/website-monitoring/config/<< parameters.website_id >>/sourcemap-upload"
           # echo "CREATION_ENDPOINT=$CREATION_ENDPOINT"
           CREATION_RESPONSE=$(curl -s -X POST $CREATION_ENDPOINT -H "Content-Type: application/json" -H "Accept: application/json" -d '{"description": "<< parameters.upload_config_name >>"}' -H "authorization: apiToken << parameters.instana_api_token >>")
