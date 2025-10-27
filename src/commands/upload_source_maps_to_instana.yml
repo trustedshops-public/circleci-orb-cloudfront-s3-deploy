@@ -30,7 +30,6 @@ parameters:
 steps:
   - run:
       name: Upload JS source maps to Instana
-      # yamllint disable-line rule:line-length
       command: |
         # get all file upload configurations for the website
         GET_RESPONSE=$(curl -s -X GET "https://<< parameters.instana_endpoint >>/api/website-monitoring/config/<< parameters.website_id >>/sourcemap-upload" -H "Accept: application/json" -H "Authorization: apiToken << parameters.instana_api_token >>")
@@ -81,4 +80,3 @@ steps:
           UPLOAD_RESULT=$(curl -s -X PUT "$UPLOAD_ENDPOINT" -H "authorization: apiToken << parameters.instana_api_token >>" -F "url=$JS_URL" -F "sourceMap=@$MAP_LOCATION" -H "ContentType: multipart/form-data")
           echo "UPLOAD_RESULT=$UPLOAD_RESULT"
         done
-      # yamllint enable rule:line-length

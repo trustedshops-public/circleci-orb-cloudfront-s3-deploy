@@ -2,5 +2,5 @@ extends: relaxed
 
 rules:
     line-length:
-        max: 300
+        max: 260
         allow-non-breakable-inline-mappings: true
