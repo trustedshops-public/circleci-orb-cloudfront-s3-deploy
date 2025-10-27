@@ -1,0 +1,82 @@
+description: >
+  Upload JS source maps to Instana APM
+
+parameters:
+  instana_endpoint:
+    default: "$INSTANA_ENDPOINT"
+    type: string
+    description: Instana API endpoint host
+  instana_api_token:
+    default: "$INSTANA_API_TOKEN"
+    type: string
+    description: Instana API token
+  website_id:
+    description: "Website ID in Instana"
+    type: string
+  upload_config_name:
+    description: "Upload configuration name to be created and cleaned up before every upload"
+    type: string
+  assets_path:
+    default: "dist/assets"
+    description: "Local path to the folder containing JS files"
+    type: string
+  maps_path:
+    default: "source-maps"
+    description: "Local path to the folder containing JS source maps"
+    type: string
+  js_url:
+    description: "Remote path to the folder containing JS files"
+    type: string
+steps:
+  - run:
+      name: Upload JS source maps to Instana
+      command: |
+        # get all file upload configurations for the website
+        GET_RESPONSE=$(curl -s -X GET "https://<< parameters.instana_endpoint >>/api/website-monitoring/config/<< parameters.website_id >>/sourcemap-upload" -H "Accept: application/json" -H "Authorization: apiToken << parameters.instana_api_token >>")
+        echo "File Upload configurations for website ID << parameters.website_id >> : $GET_RESPONSE"
+        UPLOAD_CONFIG_ID=$(echo "$GET_RESPONSE" | jq -r '.configs[] | select(.description == "<< parameters.upload_config_name >>") | .id')
+        # create config if not found
+        if [ -z "$UPLOAD_CONFIG_ID" ]; then
+          echo "No file upload configuration << parameters.upload_config_name >> was found, so creating a new one..."
+          CREATION_ENDPOINT="https://<< parameters.instana_endpoint >>/api/website-monitoring/config/<< parameters.website_id >>/sourcemap-upload"
+          # echo "CREATION_ENDPOINT=$CREATION_ENDPOINT"
+          CREATION_RESPONSE=$(curl -s -X POST $CREATION_ENDPOINT -H "Content-Type: application/json" -H "Accept: application/json" -d '{"description": "<< parameters.upload_config_name >>"}' -H "authorization: apiToken << parameters.instana_api_token >>")
+          echo "CREATION_RESPONSE=$CREATION_RESPONSE"
+          UPLOAD_CONFIG_ID=$(echo "$CREATION_RESPONSE" | jq -r '.id')
+        fi
+        if [ -z "$UPLOAD_CONFIG_ID" ]; then
+          echo "Error: UPLOAD_CONFIG_ID is still empty!"
+          exit 1
+        else
+          echo "UPLOAD_CONFIG_ID=$UPLOAD_CONFIG_ID"
+        fi
+        # clear uploads
+        CLEAR_ENDPOINT="https://<< parameters.instana_endpoint >>/api/website-monitoring/config/<< parameters.website_id >>/sourcemap-upload/$UPLOAD_CONFIG_ID/clear"
+        # echo "CLEAR_ENDPOINT=$CLEAR_ENDPOINT"
+        CLEAR_RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}\n" -X PUT $CLEAR_ENDPOINT -H "authorization: apiToken << parameters.instana_api_token >>")
+        echo "CLEAR_RESPONSE_CODE=$CLEAR_RESPONSE_CODE"
+        if [ "$CLEAR_RESPONSE_CODE" -eq 204 ]; then
+          echo "Request to clear source map files for << parameters.upload_config_name >> was successful."
+        else
+          echo "Request to clear source map files for << parameters.upload_config_name >> failed with status code: $CLEAR_RESPONSE_CODE"
+          exit 1
+        fi
+        # upload files
+        echo "########### JS files ##########"
+        ls -al << parameters.assets_path >>/*.js
+        if ls << parameters.assets_path >>/*.js.map >/dev/null 2>&1; then
+          echo "Error: << parameters.assets_path >>/*.js.map files still exist! Move them to the << parameters.maps_path >>/ directory on the same level like your local path to sync."
+          exit 1
+        fi
+        echo "########### JS source map files ##########"
+        ls -al  << parameters.maps_path >>/*.js.map
+        UPLOAD_ENDPOINT="https://<< parameters.instana_endpoint >>/api/website-monitoring/config/<< parameters.website_id >>/sourcemap-upload/$UPLOAD_CONFIG_ID/form"
+        # echo "UPLOAD_ENDPOINT=$UPLOAD_ENDPOINT"
+        for file in  << parameters.assets_path >>/*.js; do
+          filename=$(basename "$file")
+          MAP_LOCATION="<< parameters.maps_path >>/${filename}.map"
+          JS_URL="<< parameters.js_url >>/$filename"
+          echo "JS_URL=$JS_URL \nMAP_LOCATION=$MAP_LOCATION"
+          UPLOAD_RESULT=$(curl -s -X PUT "$UPLOAD_ENDPOINT" -H "authorization: apiToken << parameters.instana_api_token >>" -F "url=$JS_URL" -F "sourceMap=@$MAP_LOCATION" -H "ContentType: multipart/form-data")
+          echo "UPLOAD_RESULT=$UPLOAD_RESULT"
+        done
